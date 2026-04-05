@@ -1,0 +1,27 @@
+[project]
+name = "agrimarket-optimizer"
+version = "1.0.0"
+description = "AgriMarket Optimizer v1 — OpenEnv RL Environment by Team 404"
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "gymnasium>=0.29.1",
+    "numpy>=1.24.3",
+    "openai>=1.0.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.uv]
+dev-dependencies = [
+    "matplotlib>=3.7.1",
+    "pandas>=2.0.2",
+    "jupyter>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

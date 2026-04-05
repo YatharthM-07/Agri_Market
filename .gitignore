@@ -1,0 +1,86 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+*$py.class
+
+# =========================
+# Build
+# =========================
+dist/
+build/
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Secrets / env files
+# =========================
+.env
+*.env
+
+# =========================
+# YAML (ignore all EXCEPT required config)
+# =========================
+*.yaml
+*.yml
+!agrimarket-optimizer/openenv.yaml
+
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
+*.iml
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Testing / coverage
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Type checkers
+# =========================
+.mypy_cache/
+.pyre/
+
+# =========================
+# Logs / temp
+# =========================
+*.log
+tmp/
+temp/
+
+# =========================
+# Optional ML artifacts (uncomment if needed)
+# =========================
+# models/*.pkl
+# models/*.pt
+# plots/
+
+# =========================
+# Optional lock file
+# =========================
+# uv.lock
