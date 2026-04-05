@@ -12,15 +12,15 @@ dependencies = [
     "openai>=1.0.0",
 ]
 
-[project.scripts]
-server = "server.app:main"
-
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "matplotlib>=3.7.1",
     "pandas>=2.0.2",
     "jupyter>=1.0.0",
 ]
+
+[project.scripts]
+server = "server.app:main"
 
 [build-system]
 requires = ["hatchling"]
