@@ -193,8 +193,10 @@ def run_episode(episode_num: int, task: str, seed: int,
         history.append(f"Day {obs['day']}: {ACTION_NAMES[action]}")
         step += 1
 
-    print(f"[END] task={task} score={round(obs['total_profit'], 2)} steps={step}", flush=True)
-
+    max_profit = {"task1": 500.0, "task2": 1000.0, "task3": 1000.0}
+    raw_score = obs['total_profit'] / max_profit.get(task, 1000.0)
+    score = max(0.001, min(0.999, round(raw_score, 4)))
+    print(f"[END] task={task} score={score} steps={step}", flush=True)
     return {
         "total_profit": obs["total_profit"],
         "rot_events": obs["rot_events"],
