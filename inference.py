@@ -169,66 +169,38 @@ def llm_action(client: OpenAI, state: list, day: int, history: List[str]) -> int
 # ── Episode runner ─────────────────────────────────────────────────────────────
 
 ACTION_NAMES = ["HOLD", "SELL_WHEAT", "SELL_CORN", "SELL_TOMATOES"]
-
 def run_episode(episode_num: int, task: str, seed: int,
                 use_llm: bool, client: Optional[OpenAI]) -> dict:
 
-    # Reset environment via HTTP
     obs = _post("/reset", {"seed": seed, "task": task})
 
-    print(json.dumps({
-        "type":    "START",
-        "episode": episode_num,
-        "task":    task,
-        "seed":    seed,
-    }), flush=True)
+    print(f"[START] task={task}", flush=True)
 
     history: List[str] = []
     step = 0
 
     while not obs["done"]:
         state = obs["state"]
-        day   = obs["day"]
+        day = obs["day"]
 
         action = llm_action(client, state, day, history) if use_llm \
-                 else rule_based_action(state)
+            else rule_based_action(state)
 
         obs = _post("/step", {"action": action})
 
-        print(json.dumps({
-            "type":         "STEP",
-            "step":         step,
-            "day":          obs["day"],
-            "action":       action,
-            "action_name":  ACTION_NAMES[action],
-            "reward":       round(obs["reward"], 4),
-            "total_profit": round(obs["total_profit"], 2),
-            "rot_events":   obs["rot_events"],
-            "done":         obs["done"],
-            "crash_warned": obs["info"].get("crash_warned", False),
-            "msp_applied":  obs["info"].get("msp_applied", False),
-        }), flush=True)
+        print(f"[STEP] step={step} reward={round(obs['reward'], 4)}", flush=True)
 
         history.append(f"Day {obs['day']}: {ACTION_NAMES[action]}")
         step += 1
 
-    print(json.dumps({
-        "type":                     "END",
-        "episode":                  episode_num,
-        "task":                     task,
-        "total_profit":             round(obs["total_profit"], 2),
-        "rot_events":               obs["rot_events"],
-        "crash_warnings_heeded":    obs.get("crash_warnings_heeded", 0),
-        "crash_warnings_received":  obs.get("crash_warnings_received", 0),
-        "steps":                    step,
-    }), flush=True)
+    print(f"[END] task={task} score={round(obs['total_profit'], 2)} steps={step}", flush=True)
 
     return {
-        "total_profit":            obs["total_profit"],
-        "rot_events":              obs["rot_events"],
-        "crash_warnings_heeded":   obs.get("crash_warnings_heeded", 0),
+        "total_profit": obs["total_profit"],
+        "rot_events": obs["rot_events"],
+        "crash_warnings_heeded": obs.get("crash_warnings_heeded", 0),
         "crash_warnings_received": obs.get("crash_warnings_received", 0),
-        "steps":                   step,
+        "steps": step,
     }
 
 
