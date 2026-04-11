@@ -31,7 +31,7 @@ TASK_CONFIG = {
         "success_label": "Profit >= $1000 in 70%+ of episodes",
     },
     "task3": {
-        "episodes": 3000,
+        "episodes": 5000,
         "eval_episodes": 100,
         "epsilon_decay": 0.998,
         "success_label": "Respond to crash warnings in 80%+ of crash episodes",

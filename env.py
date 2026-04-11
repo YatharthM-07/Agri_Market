@@ -168,8 +168,15 @@ class AgriMarketEnv(gym.Env):
             reward -= 100.0
 
         # 5. Small holding penalty to discourage infinite waiting
-        if action == 0:
-            reward -= 0.1
+            # 5. Holding penalty + urgency shaping for near-expiry crops
+            if action == 0:
+                reward -= 0.1
+                # Extra pressure when crops are about to rot
+                for i, crop in enumerate(self.CROPS):
+                    if self.freshness[crop] == 1 and self.inventory[crop] > 0:
+                        reward -= 5.0  # "you should have sold this"
+                    elif self.freshness[crop] == 2 and self.inventory[crop] > 0:
+                        reward -= 1.0
 
         # 6. Update market prices and news for next step
         self.prev_news_feed = self.news_feed
@@ -224,7 +231,7 @@ class AgriMarketEnv(gym.Env):
             prices[crop] = float(np.clip(raw, lo, hi))
 
         # task3: if crash warning was given, crash prices 80%
-        if self.task == "task3" and self.news_feed == 2:
+        if self.task == "task3" and self.prev_news_feed == 2:
             for crop in self.CROPS:
                 prices[crop] = max(
                     self.price_range[crop][0], prices[crop] * 0.2
@@ -244,9 +251,9 @@ class AgriMarketEnv(gym.Env):
             return 1
         else:
             # task3: full news
-            if r < 0.70:
+            if r < 0.65:
                 return 0   # Normal
-            elif r < 0.85:
+            elif r < 0.80:
                 return 1   # Rain — prices may rise
             else:
                 return 2   # Crash warning! (received counted in step())
@@ -254,7 +261,7 @@ class AgriMarketEnv(gym.Env):
     def _get_price_multiplier(self, crop, price):
         """Return sale multiplier based on price quality."""
         history = self._price_history[crop]
-        if len(history) < 5:
+        if len(history) < 3:
             return 1.0  # Not enough history yet
 
         p80 = float(np.percentile(history, 80))
